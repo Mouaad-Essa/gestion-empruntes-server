@@ -4,6 +4,7 @@ import cors from "cors";
 import livreRoutes from "./routes/livreRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import empruntRoutes from "./routes/empruntRoutes.js";
 import { authenticateToken } from "./middleware/authMiddleware.js";
 dotenv.config();
 
@@ -16,8 +17,9 @@ app.use("/api", livreRoutes);
 // auth route
 app.use("/api/auth", authRoutes);
 //user route
-app.use("/api/auth", authRoutes);
 app.use("/api/user", authenticateToken, userRoutes);
+//emprunter route
+app.use("/api/userEmp", empruntRoutes);
 
 // 📌 Start Server
 const PORT = process.env.PORT || 5000;

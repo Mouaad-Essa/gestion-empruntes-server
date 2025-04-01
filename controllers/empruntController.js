@@ -42,3 +42,60 @@ export const emprunterLivre = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur", error: error.message });
   }
 };
+
+// Obtenir la liste des emprunts avec les détails de l'utilisateur et du livre
+export const getEmprunts = async (req, res) => {
+  try {
+    const [emprunts] = await db.query(
+      `SELECT 
+        emprunts.id,
+        utilisateurs.nom AS utilisateur_nom,
+        livres.titre AS livre_titre,
+        livres.auteur AS livre_auteur,
+        emprunts.date_emprunt,
+        emprunts.date_retour_prevue
+      FROM emprunts
+      JOIN utilisateurs ON emprunts.utilisateur_id = utilisateurs.id
+      JOIN livres ON emprunts.livre_id = livres.id`
+    );
+
+    res.json(emprunts);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des emprunts:", error);
+    res.status(500).json({ message: "Erreur serveur", error: error.message });
+  }
+};
+
+export const getEmpruntsByUser = async (req, res) => {
+  const userId = req.user.id; // Assuming `req.user.id` is the logged-in user's ID (from a JWT or session)
+
+  if (!userId) {
+    return res.status(400).json({ message: "Utilisateur non authentifié" });
+  }
+
+  try {
+    // Query to get borrowings of the logged-in user
+    const [emprunts] = await db.query(
+      `SELECT 
+        emprunts.id,
+        utilisateurs.nom AS utilisateur_nom,
+        livres.titre AS livre_titre,
+        livres.auteur AS livre_auteur,
+        emprunts.date_emprunt,
+        emprunts.date_retour_prevue
+      FROM emprunts
+      JOIN utilisateurs ON emprunts.utilisateur_id = utilisateurs.id
+      JOIN livres ON emprunts.livre_id = livres.id
+      WHERE emprunts.utilisateur_id = ?`,
+      [userId] // Pass the user ID to filter the borrowings
+    );
+
+    res.json(emprunts);
+  } catch (error) {
+    console.error(
+      "Erreur lors de la récupération des emprunts de l'utilisateur:",
+      error
+    );
+    res.status(500).json({ message: "Erreur serveur", error: error.message });
+  }
+};

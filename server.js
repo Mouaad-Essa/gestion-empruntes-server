@@ -19,10 +19,10 @@ app.use("/api/auth", authRoutes);
 //user route
 app.use("/api/user", authenticateToken, userRoutes);
 //emprunter route
-app.use("/api/userEmp", empruntRoutes);
+app.use("/api/emp", empruntRoutes);
 
 // 📌 Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () =>
+app.listen(PORT, "0.0.0.0", () =>
   console.log(`✅ Serveur démarré sur http://localhost:${PORT}`)
 );

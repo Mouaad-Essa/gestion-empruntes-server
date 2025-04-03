@@ -5,6 +5,7 @@ import livreRoutes from "./routes/livreRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import empruntRoutes from "./routes/empruntRoutes.js";
+import statsRoutes from "./routes/statsRoutes.js";
 import { authenticateToken } from "./middleware/authMiddleware.js";
 dotenv.config();
 
@@ -20,6 +21,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", authenticateToken, userRoutes);
 //emprunter route
 app.use("/api/emp", empruntRoutes);
+
+//stats route
+app.use("/api/stats", statsRoutes);
 
 // 📌 Start Server
 const PORT = process.env.PORT || 5000;

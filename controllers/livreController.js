@@ -43,3 +43,44 @@ export const getLivreById = async (req, res) => {
     });
   }
 };
+
+// Controller to add a new book
+export const addLivre = async (req, res) => {
+  try {
+    const {
+      titre,
+      auteur,
+      description,
+      annee_publication,
+      genre,
+      isbn,
+      est_emprunte,
+      couverture,
+    } = req.body;
+
+    const [result] = await db.query(
+      "INSERT INTO livres (titre, auteur, description, annee_publication, genre, isbn, est_emprunte, couverture) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      [
+        titre,
+        auteur,
+        description,
+        annee_publication,
+        genre,
+        isbn,
+        est_emprunte || false,
+        couverture,
+      ]
+    );
+
+    return res.status(201).json({
+      message: "Livre ajouté avec succès",
+      livreId: result.insertId,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: "Erreur lors de l'ajout du livre",
+      error: err.message,
+    });
+  }
+};

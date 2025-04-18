@@ -84,3 +84,79 @@ export const addLivre = async (req, res) => {
     });
   }
 };
+
+// Contrôleur pour mettre à jour un livre par son ID
+export const updateLivre = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      titre,
+      auteur,
+      description,
+      annee_publication,
+      genre,
+      isbn,
+      est_emprunte,
+      couverture,
+    } = req.body;
+
+    const [result] = await db.query(
+      `UPDATE livres 
+       SET titre = ?, auteur = ?, description = ?, annee_publication = ?, 
+           genre = ?, isbn = ?, est_emprunte = ?, couverture = ? 
+       WHERE id = ?`,
+      [
+        titre,
+        auteur,
+        description,
+        annee_publication,
+        genre,
+        isbn,
+        est_emprunte || false,
+        couverture,
+        id,
+      ]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        message: "Livre non trouvé",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Livre mis à jour avec succès",
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: "Erreur lors de la mise à jour du livre",
+      error: err.message,
+    });
+  }
+};
+
+// Contrôleur pour supprimer un livre par son ID
+export const deleteLivre = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [result] = await db.query("DELETE FROM livres WHERE id = ?", [id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        message: "Livre non trouvé",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Livre supprimé avec succès",
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: "Erreur lors de la suppression du livre",
+      error: err.message,
+    });
+  }
+};

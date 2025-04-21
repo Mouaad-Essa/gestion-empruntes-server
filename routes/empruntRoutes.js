@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  deleteEmprunt,
   emprunterLivre,
   getEmprunts,
   getEmpruntsByUser,
@@ -14,4 +15,8 @@ router.post("/emprunter", authenticateToken, emprunterLivre);
 router.get("/emprunts", authenticateToken, getEmprunts);
 // Route pour récupérer la liste des emprunts par user
 router.get("/userEmprunt", authenticateToken, getEmpruntsByUser);
+
+// Supprimer un emprunt
+router.delete("/emprunts/:id", deleteEmprunt);
+
 export default router;

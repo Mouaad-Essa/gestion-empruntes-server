@@ -99,3 +99,35 @@ export const getEmpruntsByUser = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur", error: error.message });
   }
 };
+
+// Supprimer un emprunt et mettre à jour l'état du livre
+export const deleteEmprunt = async (req, res) => {
+  const empruntId = req.params.id;
+
+  try {
+    // Vérifier si l'emprunt existe
+    const [empruntRows] = await db.query(
+      "SELECT livre_id FROM emprunts WHERE id = ?",
+      [empruntId]
+    );
+
+    if (empruntRows.length === 0) {
+      return res.status(404).json({ message: "Emprunt non trouvé" });
+    }
+
+    const livreId = empruntRows[0].livre_id;
+
+    // Supprimer l'emprunt
+    await db.query("DELETE FROM emprunts WHERE id = ?", [empruntId]);
+
+    // Mettre à jour l'état du livre
+    await db.query("UPDATE livres SET est_emprunte = false WHERE id = ?", [
+      livreId,
+    ]);
+
+    res.json({ message: "Emprunt supprimé et livre mis à jour avec succès" });
+  } catch (error) {
+    console.error("Erreur lors de la suppression de l'emprunt:", error);
+    res.status(500).json({ message: "Erreur serveur", error: error.message });
+  }
+};

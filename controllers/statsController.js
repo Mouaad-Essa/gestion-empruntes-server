@@ -16,7 +16,6 @@ export const getDashboardStats = async (req, res) => {
     const [borrowedUsersResult] = await db.query(`
       SELECT COUNT(DISTINCT utilisateur_id) AS usersWhoBorrowedBooks
       FROM emprunts
-      WHERE date_retour_prevue IS NULL OR date_retour_prevue > NOW()
     `);
 
     // Destructuring the results from queries
